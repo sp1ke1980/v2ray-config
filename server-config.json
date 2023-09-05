@@ -1,0 +1,22 @@
+{
+    "log": {
+      "loglevel": "debug"
+    },
+    "inbounds": [{
+      "port": 9000,
+      "listen": "0.0.0.0",
+      "tag": "socks-inbound",
+      "protocol": "vmess",
+      "settings": {
+          "clients": [{ "id": "xxxxxx-xxxx-xxxx-xxxx-xxxxxxxxx" }]
+      },
+      "sniffing": {
+        "enabled": true,
+        "destOverride": ["http", "tls"]
+      }
+    }],
+    "outbounds": [{
+      "protocol": "freedom",
+      "settings": {}
+     }]
+  }
