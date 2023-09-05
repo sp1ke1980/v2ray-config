@@ -1,0 +1,153 @@
+{
+    "log": {
+      "loglevel": "warning",
+      "dnsLog": false
+    },
+    "inbounds": [
+      {
+        "sniffing": {
+          "enabled": true,
+          "destOverride": [
+            "tls",
+            "http",
+            "quic"
+          ]
+        },
+        "listen": "127.0.0.1",
+        "protocol": "shadowsocks",
+        "settings": {
+          "password": "123456",
+          "method": "chacha20-ietf-poly1305",
+          "level": 8,
+          "ota": true,
+          "udp": false,
+          "network": "tcp,udp"
+        },
+        "tag": "socks5",
+        "port": 65514
+      },
+      {
+        "listen": "[::1]",
+        "protocol": "dokodemo-door",
+        "settings": {
+          "address": "[::1]"
+        },
+        "tag": "api",
+        "port": 65515
+      },
+      {
+        "listen": "127.0.0.1",
+        "protocol": "dokodemo-door",
+        "settings": {
+          "network": "tcp,udp",
+          "port": 53,
+          "userLevel": 0,
+          "timeout": 10,
+          "address": "1.1.1.1"
+        },
+        "tag": "inDns",
+        "port": 65516
+      }
+    ],
+    "outbounds": [
+      {
+        "mux": {
+          "enabled": false,
+          "concurrency": 50
+        },
+        "protocol": "vmess",
+        "streamSettings": {
+          "network": "tcp",
+          "tcpSettings": {
+            "header": {
+              "type": "none"
+            }
+          }
+        },
+        "tag": "proxy",
+        "settings": {
+          "vnext": [
+            {
+              "address": "141.98.169.251",
+              "users": [
+                {
+                  "email": "",
+                  "id": "xxxxx-xxx-xxxx-xxxx-xxxxxxxxxx",
+                  "alterId": 64,
+                  "level": 8,
+                  "security": "auto"
+                }
+              ],
+              "port": 9000
+            }
+          ]
+        }
+      }
+    ],
+    "api": {
+      "tag": "api",
+      "services": [
+        "StatsService"
+      ]
+    },
+    "dns": {
+      "disableFallbackIfMatch": true,
+      "disableFallback": true,
+      "disableCache": true,
+      "servers": [
+        {
+          "address": "8.8.8.8",
+          "skipFallback": false
+        }
+      ],
+      "queryStrategy": "UseIP",
+      "tag": "dnsQuery"
+    },
+    "stats": {},
+    "routing": {
+      "domainStrategy": "IPOnDemand",
+      "rules": [
+        {
+          "type": "field",
+          "outboundTag": "api",
+          "inboundTag": [
+            "api"
+          ]
+        },
+        {
+          "type": "field",
+          "outboundTag": "outDns",
+          "inboundTag": [
+            "inDns"
+          ]
+        },
+        {
+          "type": "field",
+          "outboundTag": "proxy",
+          "inboundTag": [
+            "dnsQuery"
+          ]
+        }
+      ]
+    },
+    "policy": {
+      "system": {
+        "statsInboundUplink": true,
+        "statsOutboundUplink": true,
+        "statsOutboundDownlink": true,
+        "statsInboundDownlink": true
+      },
+      "levels": {
+        "8": {
+          "statsUserDownlink": false,
+          "statsUserUplink": false,
+          "bufferSize": 0,
+          "connIdle": 30,
+          "handshake": 4,
+          "downlinkOnly": 1,
+          "uplinkOnly": 1
+        }
+      }
+    },
+    "transport": {}
+  }
